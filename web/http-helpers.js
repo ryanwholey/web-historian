@@ -11,6 +11,16 @@ exports.headers = headers = {
 };
 
 exports.serveAssets = function(res, asset, callback) {
+  var file = fs.readFileSync(path.join(__dirname, './', asset), 'utf-8');
+  var statusCode = 200;
+  res.writeHeader(statusCode, headers);
+  res.end(file);
+  // res.end();
+      
+    
+  
+
+
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
@@ -21,3 +31,5 @@ exports.serveAssets = function(res, asset, callback) {
   // css, or anything that doesn't change often.)
 
 // As you progress, keep thinking about what helper functions you can put here!
+
+// exports.serveAssets({}, 'public/index.html', function(d){console.log(d);});

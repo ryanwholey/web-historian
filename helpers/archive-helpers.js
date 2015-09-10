@@ -37,11 +37,18 @@ exports.readListOfUrls = function(cb) {
   });
 };
 
+// exports.readListOfUrls(function(d){console.log(d); });
+
+
+
 exports.isUrlInList = function(url, cb) {
   exports.readListOfUrls(function(d){
     cb(_.contains(d, url));
   });
 };
+// exports.isUrlInList('www.homestarrunner.com', function(d){console.log(d, '<< should be true that homestarrunner is present.')});
+
+
 
 
 exports.addUrlToList = function(url) {
@@ -51,10 +58,23 @@ exports.addUrlToList = function(url) {
     }
   });
 };
+// exports.addUrlToList('www.neopets.com');
+// exports.isUrlInList('www.neopets.com', function(d){console.log(d,'<<< should be true if add to list works')});
+
+
+
 
 exports.isUrlArchived = function(url, cb) {
-  fs.exists(path.join(__dirname,'./','../archives/sites/'+ url +'.html'), function(exists){ cb(exists); });
+  fs.open(path.join(__dirname,'./','../archives/sites/'+ url +'.html'), 'r', function(err, data){
+    if(!err){
+      cb( Boolean(data) );
+    }else{
+      cb(false);
+    }
+  });
 };
+
+// exports.isUrlArchived('www.amazon.com', function(d){ console.log(d,'<< should be true if isUrlArchived works')});
 
 
 
@@ -77,22 +97,4 @@ exports.downloadUrls = function() {
   });
 };
 
-
-
-
-
-  // exports.isUrlArchived(url, function(exists){
-  //   if(exists){
-  //     request(url, function(err, response, body) {
-  //       if (!err && response.statusCode === 200) {
-  //         console.log(body);
-  //       }
-  //     })
-  //   } else{
-  //     console.log('isn"t there');
-  //   }
-  // })
-// };
-
-exports.downloadUrls();
 

@@ -3,7 +3,7 @@ var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
 var url = require('url');
 var httpHelp = require('./http-helpers');
-
+var qs = require('querystring');
 
 
 // require more modules/folders here!
@@ -11,30 +11,22 @@ var httpHelp = require('./http-helpers');
 // var loading = fs.readFileSync(path.join(__dirname, './', 'public/loading.html'));
 // var styles = fs.readFileSync(path.join(__dirname, './', 'public/styles.css'));
 
+// setInterval(function(){console.log('archiving');archive.downloadUrls();},10000);
+exports.runCron = function(){
+  setInterval(function(){console.log('archiving');archive.downloadUrls();},10000);
+};
 
 exports.handleRequest = function (req, res) {
+  
   if(req.url ==='/'){
     httpHelp.serveAssets(res, 'public/index.html');
     // res.writeHeader(200,{'Content-Type' : 'text/html'})
     // res.end(index);
   }
 
-
-
-
-
-  // var parts = url.parts(req.url);
-  // var pathname;
-  // if (parts.pathname === '/') {
-  //   pathname = '/index.html';
-  // } else {
-  //   pathname = parts.pathname;
-  // }
-
-
-
   if(req.method === 'POST'){
-    // res.writeHeader(201, {"Content-Type" : "text/html"});
+    
+    
     var dataString = '';
 
     req.on('data', function(chunk){
@@ -53,16 +45,30 @@ exports.handleRequest = function (req, res) {
         } else {
           archive.isUrlArchived(dataString, function(archived) {
             if (archived) {
-              fs.readFile(path.join(__dirname, './', '../archives/sites/' + dataString + '.html'), function(data) {
-                res.end(data); //maybe need to parse? -Ryan
-              });
+              // httpHelp.serveAssets(res, '../archives/sites/' + dataString + '.html');
+              // fs.readFile(path.join(__dirname, './', '../archives/sites/' + dataString + '.html'), function(data) {
+              //   res.end(data); 
+              // });
             }
           });
         }
       });
+      httpHelp.serveAssets(res, 'public/loading.html');
     });
-    httpHelp.serveAssets(res, 'public/loading.html');
-    // res.end(loading);
+    
+  
+  } else if(req.method === 'GET'){
+    var localPath = req.url.substring(1);
+    archive.isUrlArchived(localPath, function(archived){
+      if(archived){
+        httpHelp.serveAssets(res, '../archives/sites/' + localPath + '.html');
+      } else if(req.url!== '/request-handler.js') {
+        res.writeHeader(404, {'Content-Type':'text/html'});
+        res.end('<!doctype html><html><body>not found</body></html>');
+      }
+    });
   }
+  else{
   res.end();
+  }
 };

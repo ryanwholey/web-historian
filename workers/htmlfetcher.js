@@ -2,11 +2,10 @@
 // that are waiting.
 // var path = require('path');
 var archive = require('../helpers/archive-helpers');
-// var fs = require('fs');
+var fs = require('fs');
 // var url = require('url');
 // var httpHelp = require('./http-helpers');
 
 (function(){
-  console.log('cron-ing');
   archive.downloadUrls();
 })();

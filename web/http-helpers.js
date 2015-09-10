@@ -14,6 +14,7 @@ exports.serveAssets = function(res, asset, callback) {
   var file = fs.readFileSync(path.join(__dirname, './', asset), 'utf-8');
   var statusCode = 200;
   res.writeHeader(statusCode, headers);
+  // callback(file);
   res.end(file);
   // res.end();
       
